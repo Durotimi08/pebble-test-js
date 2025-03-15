@@ -1,16 +1,46 @@
 /**
- * Frequency-Based Sequence Partitioning Solution
+ * Frequency-Based Sequence Partitioning
  *
- * This implementation uses a segment tree combined with frequency-based partitioning
- * to efficiently answer queries about the kth most frequent element in a range.
+ * Implement a solution that efficiently processes an array of integers and answers
+ * frequency-based range queries using principles similar to Adaptive Wavelet Trees.
+ *
+ * The function should build a data structure that partitions the sequence based on
+ * element frequencies, allowing for efficient querying of the kth most frequent element
+ * within any subrange of the original array.
+ *
+ * @param {number[]} arr - An array of integers where 0 ≤ arr[i] ≤ 10^6
+ * @param {number[][]} queries - Array of queries, each containing [left, right, k]
+ *                              where:
+ *                              - left and right define the range [left, right] (inclusive)
+ *                              - k is the frequency rank (1 = most frequent, 2 = second most frequent, etc.)
+ *
+ * @returns {number[]} - Array of query results, where each element is the kth most
+ *                       frequent element in the subarray defined by the query, or -1 if
+ *                       there's no such element.
+ *
+ * @throws {Error} - If the input array is empty
+ * @throws {Error} - If any query has invalid range (left > right or out of bounds)
+ * @throws {Error} - If any query has invalid k value (k ≤ 0 or k > distinct elements in range)
+ *
+ * Example:
+ * Input:
+ *   arr = [1, 2, 3, 2, 1, 3, 1, 4, 2]
+ *   queries = [[0, 8, 1], [2, 5, 2], [4, 7, 3]]
+ * Output: [1, 3, 4]
+ * Explanation:
+ *   - In the entire array [1,2,3,2,1,3,1,4,2], element 1 appears 3 times (most frequent)
+ *   - In subarray [3,2,1,3], elements 3 appears 2 times (2nd most frequent)
+ *   - In subarray [1,3,1,4], element 4 appears 1 time (3rd most frequent)
+ *
+ * Constraints:
+ * - 1 ≤ arr.length ≤ 10^5
+ * - 0 ≤ arr[i] ≤ 10^6
+ * - 1 ≤ queries.length ≤ 10^4
+ * - 0 ≤ left ≤ right < arr.length
+ * - 1 ≤ k ≤ 100
+ * - Time complexity should be O((n + q) * log(n)) where n is the array length and q is the number of queries
  */
 
-/**
- * Create a segment tree node
- * @param {number} start - Start index of the range
- * @param {number} end - End index of the range
- * @returns {Object} - A segment tree node
- */
 function createNode(start, end) {
   return {
     start,
@@ -22,13 +52,6 @@ function createNode(start, end) {
   };
 }
 
-/**
- * Build the segment tree
- * @param {number[]} arr - The input array
- * @param {number} start - Start index of the current range
- * @param {number} end - End index of the current range
- * @returns {Object} - The root of the segment tree
- */
 function buildSegmentTree(arr, start, end) {
   const node = createNode(start, end);
 
@@ -69,14 +92,6 @@ function buildSegmentTree(arr, start, end) {
   return node;
 }
 
-/**
- * Find the kth most frequent element in the given range
- * @param {Object} node - The current segment tree node
- * @param {number} left - Left bound of the query range
- * @param {number} right - Right bound of the query range
- * @param {number} k - The frequency rank (1 = most frequent, etc.)
- * @returns {Object} - Contains the kth most frequent element and its frequency
- */
 function queryRange(node, left, right, k) {
   // If the current node's range is completely within the query range
   if (node.start >= left && node.end <= right) {
@@ -135,13 +150,7 @@ function queryRange(node, left, right, k) {
   return { element, frequency: rangeFrequencyMap[element] };
 }
 
-/**
- * Main function to process queries
- * @param {number[]} arr - The input array
- * @param {number[][]} queries - Array of queries [left, right, k]
- * @returns {number[]} - Array of query results
- */
-function frequencyBasedQueries(arr, queries) {
+export function frequencyBasedQueries(arr, queries) {
   if (!arr || arr.length === 0) {
     throw new Error("Input array cannot be empty");
   }
@@ -178,13 +187,6 @@ function frequencyBasedQueries(arr, queries) {
   return results;
 }
 
-/**
- * More efficient implementation using a frequency-based approach without full segment tree
- * This optimized version computes frequencies directly for each query
- * @param {number[]} arr - The input array
- * @param {number[][]} queries - Array of queries [left, right, k]
- * @returns {number[]} - Array of query results
- */
 function optimizedFrequencyBasedQueries(arr, queries) {
   if (!arr || arr.length === 0) {
     throw new Error("Input array cannot be empty");
@@ -226,6 +228,3 @@ function optimizedFrequencyBasedQueries(arr, queries) {
 
   return results;
 }
-
-// Export the optimized version as the main function
-module.exports = optimizedFrequencyBasedQueries;
